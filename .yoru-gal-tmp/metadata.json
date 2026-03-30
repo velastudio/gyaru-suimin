@@ -1,0 +1,7 @@
+{
+  "name": "夜のギャル相談室 (Yoru-Gal)",
+  "description": "寝る前に愚痴を吐き出して、ギャルに癒やされてから眠るためのストレス解消アプリ。",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
