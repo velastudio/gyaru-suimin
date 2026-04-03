@@ -7,6 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "spike:workers:env": "wrangler dev --config wrangler.toml --port 8787",
+    "spike:workers:entry": "wrangler dev --config wrangler.toml --port 8787",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
