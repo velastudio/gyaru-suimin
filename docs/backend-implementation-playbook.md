@@ -128,7 +128,7 @@ feat: wire ios app to backend responder
   - 目的: セッション単位の API 契約を満たす
   - コミット例: `feat: add ios session id handling`
 
-- [ ] F2. `BackendResponder` を実装する
+- [x] F2. `BackendResponder` を実装する
   - 目的: `POST /api/chat` を叩いて `text` を返す
   - コミット例: `feat: implement ios backend responder`
 
