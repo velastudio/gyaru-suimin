@@ -108,7 +108,7 @@ feat: wire ios app to backend responder
   - 目的: `@google/genai` を使い、モデル既定値と環境変数読み出しを実装する
   - コミット例: `feat: add gemini service`
 
-- [ ] D3. Gemini タイムアウトと異常応答の扱いを実装する
+- [x] D3. Gemini タイムアウトと異常応答の扱いを実装する
   - 目的: 8 秒タイムアウト、空文字や解釈不能応答を `502` に統一する
   - コミット例: `feat: handle gemini timeout and invalid responses`
 
