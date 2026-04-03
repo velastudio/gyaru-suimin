@@ -4,7 +4,7 @@ import Foundation
 struct BackendResponder: GalResponder {
     let baseURL: URL
 
-    func generateGalResponse(message: String) async throws -> String {
+    func generateGalResponse(sessionId _: String, message _: String) async throws -> String {
         // MVP段階ではバックエンドが未作成でもコンパイルできるように、
         // 実行時には明確にエラーを返します。
         struct NotImplementedError: LocalizedError {

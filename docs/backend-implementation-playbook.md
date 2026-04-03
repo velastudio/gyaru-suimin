@@ -124,7 +124,7 @@ feat: wire ios app to backend responder
 
 ### 4.6 フェーズ F: iOS 切り替え
 
-- [ ] F1. iOS 側で `sessionId` を保持する
+- [x] F1. iOS 側で `sessionId` を保持する
   - 目的: セッション単位の API 契約を満たす
   - コミット例: `feat: add ios session id handling`
 

@@ -23,7 +23,7 @@ struct GeminiDirectResponder: GalResponder {
         self.model = model
     }
 
-    func generateGalResponse(message: String) async throws -> String {
+    func generateGalResponse(sessionId _: String, message: String) async throws -> String {
         let systemInstruction = """
         あなたは20〜30代の社会人に寄り添う「大人なギャル」です。
         ユーザーは寝る前に1日のストレスや愚痴を吐き出しに来ています。
