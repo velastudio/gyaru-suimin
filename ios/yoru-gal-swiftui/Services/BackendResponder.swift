@@ -20,11 +20,17 @@ struct BackendResponder: GalResponder {
     }
 
     enum BackendError: LocalizedError {
+        case missingBaseURL
+        case invalidBaseURL
         case invalidResponse
         case serverError(String)
 
         var errorDescription: String? {
             switch self {
+            case .missingBaseURL:
+                return "BACKEND_BASE_URL が設定されていません。"
+            case .invalidBaseURL:
+                return "BACKEND_BASE_URL が不正です。"
             case .invalidResponse:
                 return "バックエンドの応答を解釈できませんでした。"
             case let .serverError(message):
@@ -59,6 +65,21 @@ struct BackendResponder: GalResponder {
         }
 
         throw BackendError.invalidResponse
+    }
+
+    static func fromInfoPlist() throws -> BackendResponder {
+        guard
+            let baseURLString = Bundle.main.object(forInfoDictionaryKey: "BACKEND_BASE_URL") as? String,
+            !baseURLString.isEmpty
+        else {
+            throw BackendError.missingBaseURL
+        }
+
+        guard let baseURL = URL(string: baseURLString) else {
+            throw BackendError.invalidBaseURL
+        }
+
+        return BackendResponder(baseURL: baseURL)
     }
 }
 

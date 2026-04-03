@@ -132,7 +132,7 @@ feat: wire ios app to backend responder
   - 目的: `POST /api/chat` を叩いて `text` を返す
   - コミット例: `feat: implement ios backend responder`
 
-- [ ] F3. `RootView.loadResponder()` をバックエンド経由へ切り替える
+- [x] F3. `RootView.loadResponder()` をバックエンド経由へ切り替える
   - 目的: `GeminiDirectResponder` を本経路から外す
   - コミット例: `feat: switch ios app to backend responder`
 
