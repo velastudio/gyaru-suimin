@@ -1,3 +1,6 @@
 name = "yoru-gal-server"
 main = "src/index.ts"
 compatibility_date = "2026-04-03"
+
+[vars]
+GEMINI_MODEL = "gemini-2.5-flash"
