@@ -74,7 +74,7 @@ feat: wire ios app to backend responder
   - 目的: `hono/vercel` と `export default` の構成を作る
   - コミット例: `feat: add vercel hono entrypoint`
 
-- [ ] A3. `vercel.json` を追加する
+- [x] A3. `vercel.json` を追加する
   - 目的: `/(.*)` を `/api/index` に rewrite する
   - コミット例: `chore: add vercel rewrites`
 
