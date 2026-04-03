@@ -66,7 +66,7 @@ feat: wire ios app to backend responder
 
 ### 4.1 フェーズ A: サーバ土台
 
-- [ ] A1. `server/` パッケージを新設する
+- [x] A1. `server/` パッケージを新設する
   - 目的: Node.js パッケージ、TypeScript、Hono、Vercel 向け最小構成を置く
   - コミット例: `chore: scaffold server package`
 
