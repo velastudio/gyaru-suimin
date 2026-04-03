@@ -104,7 +104,7 @@ feat: wire ios app to backend responder
   - 目的: クライアントから人格定義を外す準備をする
   - コミット例: `feat: add server managed system prompt`
 
-- [ ] D2. Gemini サービスを追加する
+- [x] D2. Gemini サービスを追加する
   - 目的: `@google/genai` を使い、モデル既定値と環境変数読み出しを実装する
   - コミット例: `feat: add gemini service`
 
