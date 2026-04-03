@@ -90,7 +90,7 @@ feat: wire ios app to backend responder
   - 目的: `sessionId` と `message` を受ける形を固定する
   - コミット例: `feat: define chat request schema`
 
-- [ ] C2. リクエストバリデーションを実装する
+- [x] C2. リクエストバリデーションを実装する
   - 目的: 空文字、空白、1000 文字超過、不正 JSON を `400` で返す
   - コミット例: `feat: validate chat request payload`
 
