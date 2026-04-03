@@ -31,7 +31,7 @@
 
 初期リリースの対象は以下とする。
 
-- Vercel 上で動作する HTTP API の実装
+- Cloudflare Workers 上で動作する HTTP API の実装
 - Gemini API を呼び出すサーバロジック
 - サーバ側でのシステムプロンプト管理
 - iOS から呼び出す主要エンドポイントの提供
@@ -57,22 +57,24 @@
 
 - クライアント: iOS アプリ
 - バックエンド: Hono + TypeScript
-- 配置先: Vercel
+- 配置先: Cloudflare Workers
 - LLM: Gemini API
-- Hono のデプロイアダプター: `hono/vercel`
+- デプロイツール: Wrangler
 
 ### 4.2 採用理由
 
-- Vercel は既存知見があり、導入と運用コストが低い
-- Hono は軽量で、単機能 API に向いている
+- Cloudflare Workers は private GitHub Organization リポジトリでも無料プランでデプロイ可能
+- Free プランで 1 日 100,000 requests、MVP 規模には十分
+- Hono は Cloudflare Workers を主要ターゲットとして公式サポートしており、相性が最良
 - 現時点では単発の HTTP リクエストで十分であり、WebSocket や DB は不要
 
 ### 4.3 実装前提
 
-- Hono は Vercel アダプター `hono/vercel` を使用する
-- エントリポイントは Vercel Serverless Functions の規約に従い `export default` でハンドラを公開する
+- Hono アプリは `export default app` で Workers エントリとして公開する
+- 環境変数は `process.env` ではなく Hono の `c.env`（Workers Bindings）から取得する
 - バックエンドはリポジトリ内の `server/` を独立した Node.js パッケージとして構成する
-- Vercel の `rootDirectory` は `server/` を指す前提とする
+- デプロイは `wrangler deploy`、ローカル確認は `wrangler dev` を使用する
+- ローカル開発時のシークレットは `server/.dev.vars` に記載し、リポジトリにはコミットしない
 - Gemini 呼び出しには `@google/genai` SDK を使わず、Gemini REST API を `fetch` で直接呼び出す
 - SDK を使わない理由: Cloudflare Workers 上で `c.env` binding が崩れることが Spike 3 で確認された
 
@@ -216,7 +218,7 @@ Gemini から空文字、`null`、または解釈不能なレスポンスが返�
 - 単発チャット応答として許容できる体感速度で応答すること
 - Gemini 呼び出し単体のタイムアウトは 8 秒とする
 
-具体的な SLA は初期版では定めないが、無制限待ち状態は許容しない。リクエスト全体の上限は Vercel の実行制限に従い、Gemini 呼び出しが 8 秒でタイムアウトした場合は `502` と `LLM_ERROR` を返す。
+具体的な SLA は初期版では定めないが、無制限待ち状態は許容しない。リクエスト全体の上限は Cloudflare Workers の実行制限に従い、Gemini 呼び出しが 8 秒でタイムアウトした場合は `502` と `LLM_ERROR` を返す。
 
 ### 8.3 保守性
 
@@ -237,7 +239,7 @@ Gemini から空文字、`null`、または解釈不能なレスポンスが返�
 
 - アプリケーション内レート制限
 
-Vercel Serverless Functions では共有ストアなしの in-memory レート制限が実効性を持たないため、初期版では `429` を要件に含めない。乱用対策が必要になった時点で、共有ストアまたは外部レイヤーを前提に別途設計する。
+Cloudflare Workers でも共有ストアなしの in-memory レート制限は実効性を持たないため、初期版では `429` を要件に含めない。乱用対策が必要になった時点で、共有ストアまたは外部レイヤーを前提に別途設計する。
 
 ### 9.3 初期版で不要なもの
 
@@ -293,7 +295,7 @@ iOS 側は以下の変更を行う前提とする。
 ```text
 server/
   package.json
-  vercel.json
+  wrangler.toml
   src/
     index.ts
     routes/chat.ts
@@ -304,12 +306,12 @@ server/
 
 構成名は最終実装時に調整してよいが、責務分離は維持すること。
 
-`vercel.json` には少なくとも以下の設定を含めること。
+`wrangler.toml` には少なくとも以下の設定を含めること。
 
-```json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }]
-}
+```toml
+name = "yoru-gal-server"
+main = "src/index.ts"
+compatibility_date = "2026-04-03"
 ```
 
 ## 13. 環境変数要件
@@ -334,7 +336,7 @@ server/
 - 異常時に JSON エラーを返す
 - API キーがクライアントに存在しない
 - iOS から `BackendResponder` 経由で疎通できる
-- Vercel 上の公開 URL で実機確認できる
+- Cloudflare Workers 上の公開 URL で実機確認できる
 
 ## 15. 今後の拡張候補
 
@@ -350,7 +352,7 @@ server/
 
 ## 16. 最終方針
 
-初期バックエンドは、Vercel 上で動作する軽量な stateless API とする。
+初期バックエンドは、Cloudflare Workers 上で動作する軽量な stateless API とする。
 
 固定方針は以下とする。
 
