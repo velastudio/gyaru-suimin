@@ -5,12 +5,19 @@ import { API_ERROR_CODES, ApiError } from '../errors/apiError.js';
 import { logError, logInfo } from '../logging/logger.js';
 import { validateChatRequest } from '../schemas/chat.js';
 
+type ChatResponderEnv = {
+  GEMINI_API_KEY: string;
+  GEMINI_MODEL?: string;
+};
+
 type ChatResponder = {
   generateResponse(message: string): Promise<string>;
 };
 
-export function createChatRoute(responder: ChatResponder) {
-  const route = new Hono();
+type ChatResponderFactory = (env: ChatResponderEnv) => ChatResponder;
+
+export function createChatRoute(factory: ChatResponderFactory) {
+  const route = new Hono<{ Bindings: ChatResponderEnv }>();
 
   route.post('/chat', async (context) => {
     let payload: unknown;
@@ -36,6 +43,7 @@ export function createChatRoute(responder: ChatResponder) {
 
     try {
       const request = validateChatRequest(payload);
+      const responder = factory(context.env);
       const text = await responder.generateResponse(request.message);
 
       logInfo('chat_request_succeeded', {
