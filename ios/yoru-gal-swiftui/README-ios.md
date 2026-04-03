@@ -23,7 +23,7 @@
 
 例:
 
-- `https://your-backend.example.com`
+- 本番: `https://yoru-gal-server.akigabe31.workers.dev`
 
 これが未設定の場合、`chat` 画面で「準備中…」ではなくエラーメッセージを表示します。
 
