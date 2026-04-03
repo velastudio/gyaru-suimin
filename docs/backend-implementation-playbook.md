@@ -86,7 +86,7 @@ feat: wire ios app to backend responder
 
 ### 4.3 フェーズ C: API 契約
 
-- [ ] C1. `POST /api/chat` のリクエストスキーマを定義する
+- [x] C1. `POST /api/chat` のリクエストスキーマを定義する
   - 目的: `sessionId` と `message` を受ける形を固定する
   - コミット例: `feat: define chat request schema`
 
