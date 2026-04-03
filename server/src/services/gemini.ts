@@ -1,5 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
-
 import { API_ERROR_CODES, ApiError } from '../errors/apiError.js';
 import { logError } from '../logging/logger.js';
 import { systemPrompt } from '../prompts/systemPrompt.js';
@@ -7,78 +5,77 @@ import { systemPrompt } from '../prompts/systemPrompt.js';
 export const DEFAULT_GEMINI_MODEL = 'gemini-3-flash-preview';
 export const GEMINI_TIMEOUT_MS = 8_000;
 
-type GeminiEnv = {
-  GEMINI_API_KEY?: string;
+export type GeminiEnv = {
+  GEMINI_API_KEY: string;
   GEMINI_MODEL?: string;
 };
 
-type GenerateContentResult = {
-  text?: string | null;
+type GeminiResponse = {
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{
+        text?: string | null;
+      }>;
+    };
+  }>;
 };
-
-type GeminiClient = {
-  models: {
-    generateContent: (request: {
-      model: string;
-      contents: string;
-      config: {
-        systemInstruction: string;
-        httpOptions: {
-          timeout: number;
-        };
-      };
-    }) => Promise<GenerateContentResult>;
-  };
-};
-
-export class GeminiConfigError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'GeminiConfigError';
-  }
-}
-
-export function getGeminiConfig(env: GeminiEnv = process.env) {
-  const apiKey = env.GEMINI_API_KEY;
-
-  if (!apiKey) {
-    throw new GeminiConfigError('GEMINI_API_KEY is required');
-  }
-
-  return {
-    apiKey,
-    model: env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL,
-  };
-}
 
 export class GeminiService {
-  private readonly ai: GeminiClient;
+  private readonly apiKey: string;
   private readonly model: string;
 
-  constructor(
-    env: GeminiEnv = process.env,
-    ai?: GeminiClient,
-  ) {
-    const config = getGeminiConfig(env);
+  constructor(env: GeminiEnv) {
+    if (!env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is required');
+    }
 
-    this.ai = ai ?? new GoogleGenAI({ apiKey: config.apiKey });
-    this.model = config.model;
+    this.apiKey = env.GEMINI_API_KEY;
+    this.model = env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL;
   }
 
   async generateResponse(message: string): Promise<string> {
     try {
-      const response = await this.ai.models.generateContent({
-        model: this.model,
-        contents: message,
-        config: {
-          systemInstruction: systemPrompt,
-          httpOptions: {
-            timeout: GEMINI_TIMEOUT_MS,
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': this.apiKey,
           },
+          body: JSON.stringify({
+            system_instruction: {
+              parts: [{ text: systemPrompt }],
+            },
+            contents: [
+              {
+                parts: [{ text: message }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.8,
+            },
+          }),
+          signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
         },
-      });
+      );
 
-      const text = response.text?.trim();
+      if (!response.ok) {
+        logError('gemini_request_failed', new Error(`status ${response.status}`), {
+          model: this.model,
+          reason: 'upstream_status',
+          status: response.status,
+        });
+
+        throw new ApiError(
+          502,
+          API_ERROR_CODES.LLM_ERROR,
+          'llm request failed',
+        );
+      }
+
+      const payload = (await response.json()) as GeminiResponse;
+      const text = payload.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
       if (!text) {
         const error = new ApiError(
@@ -116,7 +113,7 @@ export class GeminiService {
 
       logError('gemini_request_failed', error, {
         model: this.model,
-        reason: 'upstream_error',
+        reason: 'unexpected_error',
       });
 
       throw new ApiError(
