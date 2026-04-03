@@ -114,7 +114,7 @@ feat: wire ios app to backend responder
 
 ### 4.5 フェーズ E: ルート統合
 
-- [ ] E1. `POST /api/chat` を Gemini サービスへ接続する
+- [x] E1. `POST /api/chat` を Gemini サービスへ接続する
   - 目的: 正常時に `{"text": "..."}`
   - コミット例: `feat: wire chat route to gemini service`
 
