@@ -80,7 +80,7 @@ feat: wire ios app to backend responder
 
 ### 4.2 フェーズ B: ヘルスチェック
 
-- [ ] B1. `GET /health` を返すルートを追加する
+- [x] B1. `GET /health` を返すルートを追加する
   - 目的: `200` と `{"status":"ok"}` を返す
   - コミット例: `feat: add health endpoint`
 
