@@ -100,7 +100,7 @@ feat: wire ios app to backend responder
 
 ### 4.4 フェーズ D: Gemini 呼び出し
 
-- [ ] D1. システムプロンプトをサーバ側モジュールへ移す
+- [x] D1. システムプロンプトをサーバ側モジュールへ移す
   - 目的: クライアントから人格定義を外す準備をする
   - コミット例: `feat: add server managed system prompt`
 
