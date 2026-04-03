@@ -94,7 +94,7 @@ feat: wire ios app to backend responder
   - 目的: 空文字、空白、1000 文字超過、不正 JSON を `400` で返す
   - コミット例: `feat: validate chat request payload`
 
-- [ ] C3. エラーレスポンス形式を統一する
+- [x] C3. エラーレスポンス形式を統一する
   - 目的: `INVALID_REQUEST` `INTERNAL_SERVER_ERROR` `LLM_ERROR` を固定する
   - コミット例: `feat: standardize api error responses`
 
