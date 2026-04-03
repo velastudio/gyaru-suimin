@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 
 import { API_ERROR_CODES, ApiError } from '../errors/apiError.js';
+import { logError } from '../logging/logger.js';
 import { systemPrompt } from '../prompts/systemPrompt.js';
 
 export const DEFAULT_GEMINI_MODEL = 'gemini-3-flash-preview';
@@ -80,11 +81,18 @@ export class GeminiService {
       const text = response.text?.trim();
 
       if (!text) {
-        throw new ApiError(
+        const error = new ApiError(
           502,
           API_ERROR_CODES.LLM_ERROR,
           'llm returned empty response',
         );
+
+        logError('gemini_request_failed', error, {
+          model: this.model,
+          reason: 'empty_response',
+        });
+
+        throw error;
       }
 
       return text;
@@ -94,12 +102,22 @@ export class GeminiService {
       }
 
       if (isTimeoutError(error)) {
+        logError('gemini_request_failed', error, {
+          model: this.model,
+          reason: 'timeout',
+        });
+
         throw new ApiError(
           502,
           API_ERROR_CODES.LLM_ERROR,
           'llm request timed out',
         );
       }
+
+      logError('gemini_request_failed', error, {
+        model: this.model,
+        reason: 'upstream_error',
+      });
 
       throw new ApiError(
         502,

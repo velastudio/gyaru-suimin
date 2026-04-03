@@ -118,7 +118,7 @@ feat: wire ios app to backend responder
   - 目的: 正常時に `{"text": "..."}`
   - コミット例: `feat: wire chat route to gemini service`
 
-- [ ] E2. 例外ログと `sessionId` 相関ログを入れる
+- [x] E2. 例外ログと `sessionId` 相関ログを入れる
   - 目的: 本文を常時保存せず、失敗追跡可能にする
   - コミット例: `feat: add backend request logging`
 

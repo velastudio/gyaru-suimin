@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 
 import { API_ERROR_CODES, ApiError, jsonError } from './errors/apiError.js';
+import { logError } from './logging/logger.js';
 import { createChatRoute } from './routes/chat.js';
 import { GeminiService } from './services/gemini.js';
 
@@ -18,6 +19,11 @@ app.onError((error, context) => {
   if (error instanceof ApiError) {
     return jsonError(context, error);
   }
+
+  logError('request_unhandled_error', error, {
+    method: context.req.method,
+    path: context.req.path,
+  });
 
   return jsonError(
     context,
