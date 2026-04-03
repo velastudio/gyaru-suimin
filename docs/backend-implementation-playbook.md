@@ -136,7 +136,7 @@ feat: wire ios app to backend responder
   - 目的: `GeminiDirectResponder` を本経路から外す
   - コミット例: `feat: switch ios app to backend responder`
 
-- [ ] F4. クライアント API キー依存を除去する
+- [x] F4. クライアント API キー依存を除去する
   - 目的: iOS に `GEMINI_API_KEY` を持たせない状態にする
   - コミット例: `chore: remove ios gemini api key dependency`
 

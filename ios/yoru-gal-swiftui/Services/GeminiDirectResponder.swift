@@ -2,13 +2,10 @@ import Foundation
 
 struct GeminiDirectResponder: GalResponder {
     enum GeminiError: LocalizedError {
-        case missingApiKey
         case invalidResponse
 
         var errorDescription: String? {
             switch self {
-            case .missingApiKey:
-                return "GEMINI_API_KEY が設定されていません。"
             case .invalidResponse:
                 return "Gemini からの応答を解釈できませんでした。"
             }
@@ -92,16 +89,6 @@ struct GeminiDirectResponder: GalResponder {
             return text
         }
         throw GeminiError.invalidResponse
-    }
-
-    static func fromInfoPlist() throws -> GeminiDirectResponder {
-        guard
-            let apiKey = Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String,
-            !apiKey.isEmpty
-        else {
-            throw GeminiError.missingApiKey
-        }
-        return GeminiDirectResponder(apiKey: apiKey)
     }
 }
 
