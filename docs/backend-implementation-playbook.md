@@ -70,7 +70,7 @@ feat: wire ios app to backend responder
   - 目的: Node.js パッケージ、TypeScript、Hono、Vercel 向け最小構成を置く
   - コミット例: `chore: scaffold server package`
 
-- [ ] A2. Vercel 用エントリポイントを用意する
+- [x] A2. Vercel 用エントリポイントを用意する
   - 目的: `hono/vercel` と `export default` の構成を作る
   - コミット例: `feat: add vercel hono entrypoint`
 
