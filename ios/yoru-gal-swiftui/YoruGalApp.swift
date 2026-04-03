@@ -66,7 +66,7 @@ struct RootView: View {
 
     private func loadResponder() async {
         do {
-            responder = try GeminiDirectResponder.fromInfoPlist()
+            responder = try BackendResponder.fromInfoPlist()
             responderError = nil
         } catch {
             responder = nil

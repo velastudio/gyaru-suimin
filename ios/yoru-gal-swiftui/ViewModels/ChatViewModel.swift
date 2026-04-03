@@ -8,9 +8,14 @@ final class ChatViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
 
     private let responder: any GalResponder
+    private let sessionId: String
 
-    init(responder: any GalResponder) {
+    init(
+        responder: any GalResponder,
+        sessionId: String = UUID().uuidString
+    ) {
         self.responder = responder
+        self.sessionId = sessionId
     }
 
     func sendMessage() {
@@ -25,7 +30,10 @@ final class ChatViewModel: ObservableObject {
 
         Task {
             do {
-                let responseText = try await responder.generateGalResponse(message: trimmed)
+                let responseText = try await responder.generateGalResponse(
+                    sessionId: sessionId,
+                    message: trimmed
+                )
                 messages.append(Message(text: responseText, sender: .gal, timestamp: Date()))
             } catch {
                 let fallback = "あー、なんかエラー出ちゃった。まじごめん！でも君が頑張ってるのは変わらないからね。"

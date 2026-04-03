@@ -1,6 +1,6 @@
 import Foundation
 
 protocol GalResponder {
-    func generateGalResponse(message: String) async throws -> String
+    func generateGalResponse(sessionId: String, message: String) async throws -> String
 }
 
