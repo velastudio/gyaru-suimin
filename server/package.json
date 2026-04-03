@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
+    "spike:workers:env": "wrangler dev --config wrangler.toml --port 8787",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "wrangler": "^4.13.2"
   }
 }
