@@ -1,7 +1,6 @@
 ios/yoru-gal-swiftui/Models/Message.swift
 ios/yoru-gal-swiftui/Services/BackendResponder.swift
 ios/yoru-gal-swiftui/Services/GalResponder.swift
-ios/yoru-gal-swiftui/Services/GeminiDirectResponder.swift
 ios/yoru-gal-swiftui/ViewModels/ChatViewModel.swift
 ios/yoru-gal-swiftui/Views/ChatView.swift
 ios/yoru-gal-swiftui/Views/HomeView.swift
