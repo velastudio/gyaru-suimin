@@ -156,7 +156,7 @@ feat: wire ios app to backend responder
   - `tsconfig.json` の `"types"` に `"@cloudflare/workers-types"` を追加する
   - コミット例: `chore: add cloudflare workers types`
 
-- [ ] G3. `RATE_LIMITER` binding をレート制限ミドルウェアとして実装する
+- [x] G3. `RATE_LIMITER` binding をレート制限ミドルウェアとして実装する
   - 目的: `POST /api/chat` の前段で `env.RATE_LIMITER.limit({ key })` を呼び、超過時に `429` と `RATE_LIMITED` を返す
   - key: `c.req.header('CF-Connecting-IP') ?? 'unknown'`
   - 型: `@cloudflare/workers-types` の `RateLimit`

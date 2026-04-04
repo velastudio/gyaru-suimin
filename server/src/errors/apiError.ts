@@ -2,6 +2,7 @@ import type { Context } from 'hono';
 
 export const API_ERROR_CODES = {
   INVALID_REQUEST: 'INVALID_REQUEST',
+  RATE_LIMITED: 'RATE_LIMITED',
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
   LLM_ERROR: 'LLM_ERROR',
 } as const;
@@ -10,10 +11,14 @@ export type ApiErrorCode =
   (typeof API_ERROR_CODES)[keyof typeof API_ERROR_CODES];
 
 export class ApiError extends Error {
-  readonly status: 400 | 500 | 502;
+  readonly status: 400 | 429 | 500 | 502;
   readonly code: ApiErrorCode;
 
-  constructor(status: 400 | 500 | 502, code: ApiErrorCode, message: string) {
+  constructor(
+    status: 400 | 429 | 500 | 502,
+    code: ApiErrorCode,
+    message: string,
+  ) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
