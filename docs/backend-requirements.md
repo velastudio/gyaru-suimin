@@ -148,6 +148,7 @@
 |--------|------|
 | 200 | 正常応答 |
 | 400 | 入力不正 |
+| 429 | レート制限超過 |
 | 500 | サーバ内部エラー |
 | 502 | LLM 応答異常または上流 API 異常 |
 
@@ -156,6 +157,7 @@
 | Status | code |
 |--------|------|
 | 400 | `INVALID_REQUEST` |
+| 429 | `RATE_LIMITED` |
 | 500 | `INTERNAL_SERVER_ERROR` |
 | 502 | `LLM_ERROR` |
 
@@ -235,11 +237,29 @@ Gemini から空文字、`null`、または解釈不能なレスポンスが返�
 - 入力長制限を設ける
 - 初期版ではブラウザクライアントをサポートしないため、CORS ヘッダーは付与しない
 
-### 9.2 初期版で採用しない制御
+### 9.2 レート制限
 
-- アプリケーション内レート制限
+アプリケーション内の in-memory レート制限は採用しない。Cloudflare Workers では Worker インスタンスをまたいだ共有ストアが存在しないため、in-memory では実効性を持たない。
 
-Cloudflare Workers でも共有ストアなしの in-memory レート制限は実効性を持たないため、初期版では `429` を要件に含めない。乱用対策が必要になった時点で、共有ストアまたは外部レイヤーを前提に別途設計する。
+代わりに Cloudflare が提供する Workers Rate Limiting（`[[ratelimits]]` binding）を採用する。
+
+#### 実装仕様
+
+- `wrangler.toml` に `[[ratelimits]]` ブロックを追加し、`RATE_LIMITER` binding を定義する
+- 制限値: `20 req / 60 秒 / key`
+- key: クライアント IP（`CF-Connecting-IP` ヘッダ）
+- 制限超過時: `429` と `RATE_LIMITED` を返す
+- ミドルウェアを `POST /api/chat` の前段に差し込む形で実装する
+
+#### 一貫性モデルと限界
+
+Cloudflare Workers Rate Limiting は POP（エッジロケーション）ローカルのカウンタを持ち、POP 間では eventually consistent で同期される。完全なグローバル一貫制御ではないため、突発的な burst を POP 単位で見逃す可能性はある。
+
+ただし in-memory よりはるかに実用的であり、abuse 抑止（Gemini API 枠の無差別消耗防止）には十分有効である。厳密な課金防止や不正検知の最終防衛線としては使えない。
+
+#### IP ベース key の割り切り
+
+Cloudflare 公式はモバイル回線・共有ネットワークで複数ユーザーが同一 IP になりやすいとして IP 単独の key を非推奨としている。ただし現状は attacker が sessionId を自由に変えられるため、IP 以外に有効な key の候補がない。現時点は IP ベースで割り切り、X-App-Token 導入後に `token + path` ベースへ移行することを想定する。
 
 ### 9.3 初期版で不要なもの
 
@@ -334,6 +354,7 @@ compatibility_date = "2026-04-03"
 - サーバ側システムプロンプトを付与して Gemini を呼び出す
 - 正常時に `text` を返す
 - 異常時に JSON エラーを返す
+- レート制限超過時に `429` と `RATE_LIMITED` を返す
 - API キーがクライアントに存在しない
 - iOS から `BackendResponder` 経由で疎通できる
 - Cloudflare Workers 上の公開 URL で実機確認できる
