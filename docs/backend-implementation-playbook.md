@@ -150,7 +150,7 @@ feat: wire ios app to backend responder
   - `period` は `10` か `60`（秒）のみ指定可能
   - コミット例: `chore: add rate limiting binding to wrangler config`
 
-- [ ] G2. `@cloudflare/workers-types` を devDependency に追加し、tsconfig を更新する
+- [x] G2. `@cloudflare/workers-types` を devDependency に追加し、tsconfig を更新する
   - 目的: `RateLimit` 型を使えるようにする
   - `npm install -D @cloudflare/workers-types`
   - `tsconfig.json` の `"types"` に `"@cloudflare/workers-types"` を追加する
