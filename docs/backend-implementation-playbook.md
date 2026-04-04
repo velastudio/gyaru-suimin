@@ -140,6 +140,29 @@ feat: wire ios app to backend responder
   - 目的: iOS に `GEMINI_API_KEY` を持たせない状態にする
   - コミット例: `chore: remove ios gemini api key dependency`
 
+### 4.7 フェーズ G: レート制限
+
+- [x] G1. `wrangler.toml` に `[[ratelimits]]` binding を追加する
+  - 目的: Cloudflare Workers Rate Limiting を Worker に紐付ける
+  - 設定値: `limit = 20`, `period = 60`
+  - `namespace_id` は自分で決める正の整数の文字列。API やダッシュボードで発行するものではない（例: `"1001"`）
+  - 同じアカウント内で同じ `namespace_id` を使う binding はカウンタを共有する。この Worker 専用にするなら他と重複しない値を使う
+  - `period` は `10` か `60`（秒）のみ指定可能
+  - コミット例: `chore: add rate limiting binding to wrangler config`
+
+- [ ] G2. `@cloudflare/workers-types` を devDependency に追加し、tsconfig を更新する
+  - 目的: `RateLimit` 型を使えるようにする
+  - `npm install -D @cloudflare/workers-types`
+  - `tsconfig.json` の `"types"` に `"@cloudflare/workers-types"` を追加する
+  - コミット例: `chore: add cloudflare workers types`
+
+- [ ] G3. `RATE_LIMITER` binding をレート制限ミドルウェアとして実装する
+  - 目的: `POST /api/chat` の前段で `env.RATE_LIMITER.limit({ key })` を呼び、超過時に `429` と `RATE_LIMITED` を返す
+  - key: `c.req.header('CF-Connecting-IP') ?? 'unknown'`
+  - 型: `@cloudflare/workers-types` の `RateLimit`
+  - ローカル開発（`wrangler dev`）ではレート制限は動作しない。デプロイ後に確認する
+  - コミット例: `feat: add rate limiting middleware to chat endpoint`
+
 ## 5. 各ステップの着手テンプレート
 
 毎回、着手前に次の 4 点を短く確認する。

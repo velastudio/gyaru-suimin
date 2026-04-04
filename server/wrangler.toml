@@ -4,3 +4,11 @@ compatibility_date = "2026-04-03"
 
 [vars]
 GEMINI_MODEL = "gemini-2.5-flash"
+
+[[ratelimits]]
+binding = "RATE_LIMITER"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 20
+  period = 60
